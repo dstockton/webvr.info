@@ -1,9 +1,4 @@
 <!doctype html>
-<!--
-Copyright 2016 The Chromium Authors. All rights reserved.
-Use of this source code is governed by a BSD-style license that can be
-found in the LICENSE file.
--->
 <html>
   <head>
     <meta charset="utf-8">
@@ -13,13 +8,7 @@ found in the LICENSE file.
 
     <!--Chrome origin trial header-->
     <meta http-equiv="origin-trial" content="AmsYsWL751NCxAz0diFlXTfTlIi8umTOfnJZtYNN/Sl+HSXqUwFvbxPTaEvWZY1W4pvzCnI22w88tqd+3quLSgoAAABOeyJvcmlnaW4iOiAiaHR0cHM6Ly93ZWJ2ci5pbmZvOjQ0MyIsICJmZWF0dXJlIjogIldlYlZSIiwgImV4cGlyeSI6IDE0ODE5MDc2NTN9">
-
-    <title>08 - Dynamic Resolution</title>
-
-    <!--
-      This sample demonstrates how to efficiently adjust the resolution of your
-      WebVR scene on the fly using the layer bounds. Based off sample 4b.
-    -->
+    <title>UnEarthly</title>
 
     <style>
       body {
@@ -118,14 +107,18 @@ found in the LICENSE file.
             return;
           }
         }
-        gl.clearColor(0.1, 0.2, 0.3, 1.0);
+//        gl.clearColor(0.1, 0.2, 0.3, 1.0);
+        gl.clearColor(
+            0,
+            0.6823529411764706,
+            0.9411764705882353, 1.0);
         gl.enable(gl.DEPTH_TEST);
         gl.enable(gl.CULL_FACE);
 
         var textureLoader = new WGLUTextureLoader(gl);
         var texture = textureLoader.loadTexture("media/textures/cube-sea.png");
         cubeSea = new VRCubeSea(gl, texture);
-        stats = new WGLUStats(gl);
+        // stats = new WGLUStats(gl);
 
         window.addEventListener("resize", onResize, false);
         onResize();
@@ -218,16 +211,16 @@ found in the LICENSE file.
           webglCanvas.height = webglCanvas.offsetHeight * window.devicePixelRatio;
         }
       }
-
+/*
       function onClick () {
         // Reset the background color to a random value
         gl.clearColor(
-            Math.random() * 0.5,
-            Math.random() * 0.5,
-            Math.random() * 0.5, 1.0);
+            0,
+            0.6823529411764706,
+            0.9411764705882353, 1.0);
       }
       webglCanvas.addEventListener("click", onClick, false);
-
+*/
       // How large our frame should be in relation to the recommended render
       // target size.
       var resolutionMultiplier = 1.0;
@@ -275,7 +268,7 @@ found in the LICENSE file.
       }
 
       function onAnimationFrame (t) {
-        stats.begin();
+        // stats.begin();
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -300,7 +293,7 @@ found in the LICENSE file.
             gl.viewport(0, 0, webglCanvas.width, webglCanvas.height);
             mat4.perspective(projectionMat, Math.PI*0.4, webglCanvas.width / webglCanvas.height, 0.1, 1024.0);
             cubeSea.render(projectionMat, frameData.leftViewMatrix, stats);
-            stats.renderOrtho();
+            // stats.renderOrtho();
           }
         } else {
           window.requestAnimationFrame(onAnimationFrame);
@@ -311,10 +304,10 @@ found in the LICENSE file.
           mat4.identity(viewMat);
           cubeSea.render(projectionMat, viewMat, stats);
 
-          stats.renderOrtho();
+          // stats.renderOrtho();
         }
 
-        stats.end();
+        // stats.end();
       }
       })();
     </script>

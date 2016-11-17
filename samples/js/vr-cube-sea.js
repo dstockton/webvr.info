@@ -129,13 +129,19 @@ window.VRCubeSea = (function () {
       cubeVerts.push(x - size, y + size, z + size, 0.0, 0.0, 0.0, 0.0, 1.0);
     }
 
-    var gridSize = 10;
+    var gridSize = 4;
 
     // Build the cube sea
     for (var x = 0; x < gridSize; ++x) {
       for (var y = 0; y < gridSize; ++y) {
         for (var z = 0; z < gridSize; ++z) {
-          appendCube(x - (gridSize / 2), y - (gridSize / 2), z - (gridSize / 2));
+          if (z==0||z==gridSize-1||x==0||y==0||x==gridSize-1||y==gridSize-1) {
+            appendCube(
+              (2*x - (gridSize / 2)),
+              (2*y - (gridSize / 2)),
+              (2*z- (gridSize / 2))
+            );
+          }
         }
       }
     }
@@ -176,16 +182,6 @@ window.VRCubeSea = (function () {
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
 
     gl.drawElements(gl.TRIANGLES, this.indexCount, gl.UNSIGNED_SHORT, 0);
-
-    if (stats) {
-      // To ensure that the FPS counter is visible in VR mode we have to
-      // render it as part of the scene.
-      mat4.fromTranslation(this.statsMat, [0, -0.3, -0.5]);
-      mat4.scale(this.statsMat, this.statsMat, [0.3, 0.3, 0.3]);
-      mat4.rotateX(this.statsMat, this.statsMat, -0.75);
-      mat4.multiply(this.statsMat, modelViewMat, this.statsMat);
-      stats.render(projectionMat, this.statsMat);
-    }
   };
 
   return CubeSea;
