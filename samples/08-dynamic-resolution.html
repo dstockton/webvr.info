@@ -117,7 +117,30 @@
 
         var textureLoader = new WGLUTextureLoader(gl);
         var texture = textureLoader.loadTexture("media/textures/cube-sea.png");
-        cubeSea = new VRCubeSea(gl, texture);
+        var textures = {};
+        var textureKeys = ["rabbit","mongo","java","skydns","nat","haproxy","redis"];
+        for (var k in textureKeys) {
+          var kVal = textureKeys[k];
+          textures[kVal] = textureLoader.loadTexture("media/textures/" + kVal + ".png");
+        }
+        var dataSet = [];
+        var fakeSize = 49;
+        for (var faker=0;faker<fakeSize;++faker) {
+          dataSet.push({
+            "source": "app"+faker,
+            "destination": "app"+(fakeSize-faker),
+            "texture": textureKeys[ parseInt(Math.random()*textureKeys.length) ],
+            "bytes": Math.random()*1000
+          });
+          dataSet.push({
+            "source": "app"+(fakeSize-faker),
+            "destination": "app"+faker,
+            "texture": textureKeys[ parseInt(Math.random()*textureKeys.length) ],
+            "bytes": Math.random()*500
+          });
+        }
+
+        cubeSea = new VRCubeSea(gl, texture, textures, dataSet);
         // stats = new WGLUStats(gl);
 
         window.addEventListener("resize", onResize, false);
