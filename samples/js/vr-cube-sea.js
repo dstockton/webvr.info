@@ -132,9 +132,6 @@ window.VRCubeSea = (function () {
       cubeVerts.push(x - size, y + size, z + size, 0.0, 0.0, 0.0, 0.0, 1.0);
     }
 
-    this.cubeV = cubeVerts;
-    this.cubeI = cubeIndices;
-
     var gridSize = this.gridSize;
 
     // Build the cube sea
@@ -176,15 +173,6 @@ window.VRCubeSea = (function () {
   };
 
 
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
-}
-
   CubeSea.prototype.render = function (projectionMat, modelViewMat, stats) {
     var gl = this.gl;
     var program = this.program;
@@ -194,6 +182,19 @@ function sleep(milliseconds) {
     gl.uniformMatrix4fv(program.uniform.projectionMat, false, projectionMat);
     gl.uniformMatrix4fv(program.uniform.modelViewMat, false, modelViewMat);
 
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vertBuffer);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+
+    gl.enableVertexAttribArray(program.attrib.position);
+    gl.enableVertexAttribArray(program.attrib.texCoord);
+    gl.enableVertexAttribArray(program.attrib.normal);
+
+    gl.vertexAttribPointer(program.attrib.position, 3, gl.FLOAT, false, 32, 0);
+    gl.vertexAttribPointer(program.attrib.texCoord, 2, gl.FLOAT, false, 32, 12);
+    gl.vertexAttribPointer(program.attrib.normal, 3, gl.FLOAT, false, 32, 20);
+
+     gl.uniform1i(this.program.uniform.diffuse, 0);
+
     for (var cubeNum=0; cubeNum<(parseInt(this.dataSet.length/2)); ++cubeNum) {
       var textureName = this.dataSet[cubeNum]["texture"];
       var tmpTexture = this.textures["redis"];
@@ -201,30 +202,9 @@ function sleep(milliseconds) {
         var tmpTexture = this.textures[textureName];
       }
 
-      this.vertBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.vertBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.cubeV.slice(cubeNum*192, (cubeNum+1)*192)), gl.STATIC_DRAW);
-
-      this.indexBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.cubeI.slice(cubeNum*36, (cubeNum+1)*36)), gl.STATIC_DRAW);
-
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.vertBuffer);
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-
-      gl.enableVertexAttribArray(program.attrib.position);
-      gl.enableVertexAttribArray(program.attrib.texCoord);
-      gl.enableVertexAttribArray(program.attrib.normal);
-
-      gl.vertexAttribPointer(program.attrib.position, 3, gl.FLOAT, false, 32, 0);
-      gl.vertexAttribPointer(program.attrib.texCoord, 2, gl.FLOAT, false, 32, 12);
-      gl.vertexAttribPointer(program.attrib.normal, 3, gl.FLOAT, false, 32, 20);
-
-      gl.activeTexture(gl.TEXTURE0);
-      gl.uniform1i(this.program.uniform.diffuse, 0);
+      gl.activeTexture(gl.TEXTURE0+(cubeNum % 2 ));
       gl.bindTexture(gl.TEXTURE_2D, tmpTexture );
-      gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
-
+      gl.drawElements(gl.TRIANGLES, 72, gl.UNSIGNED_SHORT, cubeNum*72);
     }
   };
 
