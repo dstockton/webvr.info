@@ -160,6 +160,12 @@
             case "agg-restheart":
               dataSet[ii]["texture"] = "java";
               break;
+            case "restheart1":
+              dataSet[ii]["texture"] = "agg";
+              break;
+            case "restheart1 #5":
+              dataSet[ii]["texture"] = "agg";
+              break;
             case "alert-service":
               dataSet[ii]["texture"] = "java";
               break;
@@ -179,6 +185,9 @@
               dataSet[ii]["texture"] = "aem";
               break;
             case "ca":
+              dataSet[ii]["texture"] = "ejbca";
+              break;
+            case "ca1 #1":
               dataSet[ii]["texture"] = "ejbca";
               break;
             case "clubs-backoffice-admin":
@@ -271,7 +280,13 @@
             case "redis1 #12":
               dataSet[ii]["texture"] = "redis";
               break;
+            case "redis1 #13":
+              dataSet[ii]["texture"] = "redis";
+              break;
             case "redis1 #14":
+              dataSet[ii]["texture"] = "redis";
+              break;
+            case "redis1 #15":
               dataSet[ii]["texture"] = "redis";
               break;
             case "redis":
@@ -327,6 +342,7 @@
               break;
             case "smtp-relay1":
               dataSet[ii]["texture"] = "mail";
+              break;
             default:
               dataSet[ii]["texture"] = "java";
               console.log("Defaulting " + dataSet[ii]["source"] + " to java");
