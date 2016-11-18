@@ -132,11 +132,84 @@ window.VRCubeSea = (function () {
       cubeVerts.push(x - size, y + size, z + size, 0.0, 0.0, 0.0, 0.0, 1.0);
     }
 
+
+    // Build a single cube.
+    function appendLine (x, y, z, j, k, l) {
+      if (!x && !y && !z) {
+        // Don't create a cube in the center.
+        return;
+      }
+
+      var size = 0.025;
+      // Bottom
+      var idx = cubeVerts.length / 8.0;
+      cubeIndices.push(idx, idx + 1, idx + 2);
+      cubeIndices.push(idx, idx + 2, idx + 3);
+
+      //             X         Y         Z         U    V    NX    NY   NZ
+      cubeVerts.push(x - size, y - size, z - size, 0.0, 1.0, 0.0, -1.0, 0.0);
+      cubeVerts.push(x + size, y - size, z - size, 1.0, 1.0, 0.0, -1.0, 0.0);
+      cubeVerts.push(j + size, k - size, l + size, 1.0, 0.0, 0.0, -1.0, 0.0);
+      cubeVerts.push(j - size, k - size, l + size, 0.0, 0.0, 0.0, -1.0, 0.0);
+
+      // Top
+      idx = cubeVerts.length / 8.0;
+      cubeIndices.push(idx, idx + 2, idx + 1);
+      cubeIndices.push(idx, idx + 3, idx + 2);
+
+      cubeVerts.push(x - size, y + size, z - size, 0.0, 0.0, 0.0, 1.0, 0.0);
+      cubeVerts.push(x + size, y + size, z - size, 1.0, 0.0, 0.0, 1.0, 0.0);
+      cubeVerts.push(j + size, k + size, l + size, 1.0, 1.0, 0.0, 1.0, 0.0);
+      cubeVerts.push(j - size, k + size, l + size, 0.0, 1.0, 0.0, 1.0, 0.0);
+
+      // Left
+      idx = cubeVerts.length / 8.0;
+      cubeIndices.push(idx, idx + 2, idx + 1);
+      cubeIndices.push(idx, idx + 3, idx + 2);
+
+      cubeVerts.push(x - size, y - size, z - size, 0.0, 1.0, -1.0, 0.0, 0.0);
+      cubeVerts.push(x - size, y + size, z - size, 0.0, 0.0, -1.0, 0.0, 0.0);
+      cubeVerts.push(j - size, k + size, l + size, 1.0, 0.0, -1.0, 0.0, 0.0);
+      cubeVerts.push(j - size, k - size, l + size, 1.0, 1.0, -1.0, 0.0, 0.0);
+
+      // Right
+      idx = cubeVerts.length / 8.0;
+      cubeIndices.push(idx, idx + 1, idx + 2);
+      cubeIndices.push(idx, idx + 2, idx + 3);
+
+      cubeVerts.push(x + size, y - size, z - size, 1.0, 1.0, 1.0, 0.0, 0.0);
+      cubeVerts.push(x + size, y + size, z - size, 1.0, 0.0, 1.0, 0.0, 0.0);
+      cubeVerts.push(j + size, k + size, l + size, 0.0, 0.0, 1.0, 0.0, 0.0);
+      cubeVerts.push(j + size, k - size, l + size, 0.0, 1.0, 1.0, 0.0, 0.0);
+
+      // Back
+      idx = cubeVerts.length / 8.0;
+      cubeIndices.push(idx, idx + 2, idx + 1);
+      cubeIndices.push(idx, idx + 3, idx + 2);
+
+      cubeVerts.push(x - size, y - size, z - size, 1.0, 1.0, 0.0, 0.0, -1.0);
+      cubeVerts.push(x + size, y - size, z - size, 0.0, 1.0, 0.0, 0.0, -1.0);
+      cubeVerts.push(x + size, y + size, z - size, 0.0, 0.0, 0.0, 0.0, -1.0);
+      cubeVerts.push(x - size, y + size, z - size, 1.0, 0.0, 0.0, 0.0, -1.0);
+
+      // Front
+      idx = cubeVerts.length / 8.0;
+      cubeIndices.push(idx, idx + 1, idx + 2);
+      cubeIndices.push(idx, idx + 2, idx + 3);
+
+      cubeVerts.push(x - size, y - size, z + size, 0.0, 1.0, 0.0, 0.0, 1.0);
+      cubeVerts.push(x + size, y - size, z + size, 1.0, 1.0, 0.0, 0.0, 1.0);
+      cubeVerts.push(x + size, y + size, z + size, 1.0, 0.0, 0.0, 0.0, 1.0);
+      cubeVerts.push(x - size, y + size, z + size, 0.0, 0.0, 0.0, 0.0, 1.0);
+    }
+
     var gridSize = this.gridSize;
 
     // Build the cube sea
 
     var counter = 0;
+    var roleLookup = {};
+
     for (var x = 0; x < gridSize; ++x) {
       for (var y = 0; y < gridSize; ++y) {
         for (var z = 0; z < gridSize; ++z) {
@@ -144,18 +217,36 @@ window.VRCubeSea = (function () {
           if (z==0||z==gridSize-1||x==0||y==0||x==gridSize-1||y==gridSize-1) {
             if (counter<this.dataSet.length/2) {
               counter++;
-              var dist = 2;
-              appendCube(
-                (dist*x - (gridSize / 2)),
-                (dist*y - (gridSize / 2)),
-                (dist*z- (gridSize / 2))
-              );
+              var dist = 3;
+
+              var tmpX = (dist*x - (gridSize / 2));
+              var tmpY = (dist*y - (gridSize / 2));
+              var tmpZ = (dist*z - (gridSize / 2));
+
+              roleLookup[this.dataSet[counter-1]["source"]] = [tmpX,tmpY,tmpZ];
+
+              appendCube(tmpX,tmpY,tmpZ);
             }
           }
         }
       }
     }
-    console.log("Added " + counter + " cubes");
+
+    for (var xx=0; xx<this.dataSet.length; ++xx) {
+      var sourceLocation = roleLookup[ this.dataSet[xx]["source"]];
+      var destLocation = roleLookup[ this.dataSet[xx]["destination"] ];
+
+      if (sourceLocation && destLocation) {
+        appendLine(
+            sourceLocation[0],
+            sourceLocation[1],
+            sourceLocation[2],
+            destLocation[0],
+            destLocation[1],
+            destLocation[2]
+          );
+      }
+    }
 
     this.vertBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertBuffer);
@@ -193,8 +284,9 @@ window.VRCubeSea = (function () {
     gl.vertexAttribPointer(program.attrib.texCoord, 2, gl.FLOAT, false, 32, 12);
     gl.vertexAttribPointer(program.attrib.normal, 3, gl.FLOAT, false, 32, 20);
 
-     gl.uniform1i(this.program.uniform.diffuse, 0);
+    gl.uniform1i(this.program.uniform.diffuse, 0);
 
+    // Draw cubes
     for (var cubeNum=0; cubeNum<(parseInt(this.dataSet.length/2)); ++cubeNum) {
       var textureName = this.dataSet[cubeNum]["texture"];
       var tmpTexture = this.textures["redis"];
@@ -206,6 +298,15 @@ window.VRCubeSea = (function () {
       gl.bindTexture(gl.TEXTURE_2D, tmpTexture );
       gl.drawElements(gl.TRIANGLES, 72, gl.UNSIGNED_SHORT, cubeNum*72);
     }
+
+    // Draw connections
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, this.texture );
+    var base = (parseInt(this.dataSet.length/2))*72;
+    for (var xx=0; xx<this.dataSet.length; ++xx) {
+      gl.drawElements(gl.TRIANGLES, 72, gl.UNSIGNED_SHORT, base+(xx*72));
+    }
+
   };
 
   return CubeSea;
