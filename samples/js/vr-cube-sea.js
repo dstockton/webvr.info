@@ -153,13 +153,14 @@ window.VRCubeSea = (function () {
 
 
     // Build a single cube.
-    function appendLine (x, y, z, j, k, l) {
+    function appendLine (x, y, z, j, k, l, sizer) {
       if (!x && !y && !z) {
         // Don't create a cube in the center.
         return;
       }
 
-      var size = 0.025;
+      var size = Math.min(0.04, Math.max(0.005, sizer*50) );
+
       // Bottom
       var idx = cubeVerts.length / 8.0;
       cubeIndices.push(idx, idx + 1, idx + 2);
@@ -254,9 +255,25 @@ window.VRCubeSea = (function () {
       }
     }
 
+    var biggestSize = 0;
+
+    for (var xx=0; xx<this.dataSet.length; ++xx) {
+      var tmpSize = parseInt( this.dataSet[xx]["bytes"] );
+      if (!tmpSize || isNaN(tmpSize)) {
+        tmpSize=0;
+      }
+      biggestSize = Math.max(biggestSize, tmpSize);
+    }
+
     for (var xx=0; xx<this.dataSet.length; ++xx) {
       var sourceLocation = roleLookup[ this.dataSet[xx]["source"] ];
       var destLocation = roleLookup[ this.dataSet[xx]["destination"] ];
+      var tmpSize = parseInt(this.dataSet[xx]["destination"]);
+      if (!tmpSize || isNaN(tmpSize)) {
+        tmpSize = biggestSize;
+      }
+
+      tmpSize = (this.dataSet[xx]["bytes"]/biggestSize);
 
       if (sourceLocation && destLocation) {
         appendLine(
@@ -265,7 +282,8 @@ window.VRCubeSea = (function () {
             sourceLocation[2],
             destLocation[0],
             destLocation[1],
-            destLocation[2]
+            destLocation[2],
+            tmpSize
           );
       }
     }
