@@ -46,6 +46,7 @@
         BUFFER_SCALE: 0.75,
       };
     </script>
+    <script src="js/traffic.js"></script>
     <script src="js/third-party/webvr-polyfill.js"></script>
     <script src="js/third-party/wglu/wglu-url.js"></script>
     <script>
@@ -118,12 +119,221 @@
         var textureLoader = new WGLUTextureLoader(gl);
         var texture = textureLoader.loadTexture("media/textures/connection.png");
         var textures = {};
-        var textureKeys = ["rabbit","mongo","java","skydns","nat","haproxy","redis"];
+        var textureKeys = ["aem","agg","clubs","cron","ejbca","elasticsearch","gluster","haproxy","java","kafka","mail","mobilesvc","mongo","nat","nginx","rabbit","redis","skydns","ssh"];
         for (var k in textureKeys) {
           var kVal = textureKeys[k];
           textures[kVal] = textureLoader.loadTexture("media/textures/" + kVal + ".png");
         }
-        var dataSet = [];
+        var dataSet = window.traffic//.slice(0,200);
+        for (var ii=0; ii<dataSet.length; ++ii) {
+          switch( dataSet[ii]["source"] ) {
+            case "agg-config":
+              dataSet[ii]["texture"] = "mongo";
+              break;
+            case "config1":
+              dataSet[ii]["texture"] = "mongo";
+              break;
+            case "agg-lts-mongodb":
+              dataSet[ii]["texture"] = "mongo";
+              break;
+            case "agg-management-agent":
+              dataSet[ii]["texture"] = "agg";
+              break;
+            case "management-agent1":
+              dataSet[ii]["texture"] = "agg";
+              break;
+            case "agg-private-api":
+              dataSet[ii]["texture"] = "agg";
+              break;
+            case "agg-private1":
+              dataSet[ii]["texture"] = "agg";
+              break;
+            case "agg-public1":
+              dataSet[ii]["texture"] = "agg";
+              break;
+            case "agg-public-api":
+              dataSet[ii]["texture"] = "agg";
+              break;
+            case "agg-redis":
+              dataSet[ii]["texture"] = "redis";
+              break;
+            case "agg-restheart":
+              dataSet[ii]["texture"] = "java";
+              break;
+            case "alert-service":
+              dataSet[ii]["texture"] = "java";
+              break;
+            case "app3":
+              dataSet[ii]["texture"] = "mobilesvc";
+              break;
+            case "app4":
+              dataSet[ii]["texture"] = "mobilesvc";
+              break;
+            case "app5":
+              dataSet[ii]["texture"] = "mobilesvc";
+              break;
+            case "author":
+              dataSet[ii]["texture"] = "aem";
+              break;
+            case "author-mse":
+              dataSet[ii]["texture"] = "aem";
+              break;
+            case "ca":
+              dataSet[ii]["texture"] = "ejbca";
+              break;
+            case "clubs-backoffice-admin":
+              dataSet[ii]["texture"] = "clubs";
+              break;
+            case "clubs-service":
+              dataSet[ii]["texture"] = "clubs";
+              break;
+            case "clubs-service-credit":
+              dataSet[ii]["texture"] = "clubs";
+              break;
+            case "credit-alert-service":
+              dataSet[ii]["texture"] = "clubs";
+              break;
+            case "credit-club":
+              dataSet[ii]["texture"] = "clubs";
+              break;
+            case "elasticsearch1":
+              dataSet[ii]["texture"] = "elasticsearch";
+              break;
+            case "elasticsearch1-admin":
+              dataSet[ii]["texture"] = "elasticsearch";
+              break;
+            case "elasticsearch1-admin1":
+              dataSet[ii]["texture"] = "elasticsearch";
+              break;
+            case "external-access1":
+              dataSet[ii]["texture"] = "haproxy";
+              break;
+            case "internal-gateway1":
+              dataSet[ii]["texture"] = "haproxy";
+              break;
+            case "internal-gateway1-app":
+              dataSet[ii]["texture"] = "haproxy";
+              break;
+            case "jumpbox1":
+              dataSet[ii]["texture"] = "ssh";
+              break;
+            case "jumpbox":
+              dataSet[ii]["texture"] = "ssh";
+              break;
+            case "lb-aem1":
+              dataSet[ii]["texture"] = "haproxy";
+              break;
+            case "lb-aem1-app":
+              dataSet[ii]["texture"] = "haproxy";
+              break;
+            case "lb-aem2":
+              dataSet[ii]["texture"] = "haproxy";
+              break;
+            case "lb-agg1":
+              dataSet[ii]["texture"] = "haproxy";
+              break;
+            case "lb-agg1-app":
+              dataSet[ii]["texture"] = "haproxy";
+              break;
+            case "lb-clubs-service":
+              dataSet[ii]["texture"] = "haproxy";
+              break;
+            case "lb-clubs-service-credit":
+              dataSet[ii]["texture"] = "haproxy";
+              break;
+            case "lb-credit-club":
+              dataSet[ii]["texture"] = "haproxy";
+              break;
+            case "lb-redirect-service1":
+              dataSet[ii]["texture"] = "haproxy";
+              break;
+            case "lb-redirect-service2":
+              dataSet[ii]["texture"] = "haproxy";
+              break;
+            case "lb-service-pool1":
+              dataSet[ii]["texture"] = "haproxy";
+              break;
+            case "lb-service-pool1-rabbitmq":
+              dataSet[ii]["texture"] = "haproxy";
+              break;
+            case "lb-service-pool1-rabbitmq1":
+              dataSet[ii]["texture"] = "haproxy";
+              break;
+            case "service-pool1-rabbitmq1":
+              dataSet[ii]["texture"] = "haproxy";
+              break;
+            case "lb-service-pool1-redis":
+              dataSet[ii]["texture"] = "haproxy";
+              break;
+            case "redis":
+              dataSet[ii]["texture"] = "redis";
+              break;
+            case "redis1 #12":
+              dataSet[ii]["texture"] = "redis";
+              break;
+            case "redis1 #14":
+              dataSet[ii]["texture"] = "redis";
+              break;
+            case "redis":
+              dataSet[ii]["texture"] = "redis";
+              break;
+            case "nat":
+              dataSet[ii]["texture"] = "nat";
+              break;
+            case "lts-mongodb1":
+              dataSet[ii]["texture"] = "mongo";
+              break;
+            case "publisher":
+              dataSet[ii]["texture"] = "aem";
+              break;
+            case "publisher-mse":
+              dataSet[ii]["texture"] = "aem";
+              break;
+            case "redirect-service1":
+              dataSet[ii]["texture"] = "nginx";
+              break;
+            case "service-pool1-app":
+              dataSet[ii]["texture"] = "java";
+              break;
+            case "service-pool1-gluster":
+              dataSet[ii]["texture"] = "gluster";
+              break;
+            case "service-pool1-kafka":
+              dataSet[ii]["texture"] = "kafka";
+              break;
+            case "service-pool1-mongo":
+              dataSet[ii]["texture"] = "mongo";
+              break;
+            case "service-pool1-mongodb":
+              dataSet[ii]["texture"] = "mongo";
+              break;
+            case "service-pool1-rabbitmq-ebs":
+              dataSet[ii]["texture"] = "rabbit";
+              break;
+            case "service-pool1-redis":
+              dataSet[ii]["texture"] = "redis";
+              break;
+            case "service-pool1-scheduler":
+              dataSet[ii]["texture"] = "cron";
+              break;
+            case "services-mongodb1-wt":
+              dataSet[ii]["texture"] = "mongo";
+              break;
+            case "skydns":
+              dataSet[ii]["texture"] = "skydns";
+              break;
+            case "dns":
+              dataSet[ii]["texture"] = "skydns";
+              break;
+            case "smtp-relay1":
+              dataSet[ii]["texture"] = "mail";
+            default:
+              dataSet[ii]["texture"] = "java";
+              console.log("Defaulting " + dataSet[ii]["source"] + " to java");
+          }
+        }
+
+        /*
         var fakeSize = 49;
         for (var faker=0;faker<fakeSize;++faker) {
           dataSet.push({
@@ -139,6 +349,7 @@
             "bytes": Math.random()*500
           });
         }
+        */
 
         cubeSea = new VRCubeSea(gl, texture, textures, dataSet);
         // stats = new WGLUStats(gl);

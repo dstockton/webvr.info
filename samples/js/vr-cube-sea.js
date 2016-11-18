@@ -46,7 +46,26 @@ window.VRCubeSea = (function () {
 
     this.texture = texture;
     this.textures = textures;
-    this.gridSize = Math.ceil( Math.cbrt( Object.keys(dataSet).length/2 ) );
+
+    this.uniqueRoles = [];
+    for (var tt=0; tt<dataSet.length; ++tt) {
+      var tmpSourceRole = dataSet[tt]["source"];
+      var tmpDestRole = dataSet[tt]["destination"];
+
+      if (this.uniqueRoles.indexOf(tmpSourceRole) == -1) {
+        this.uniqueRoles.push(tmpSourceRole);
+      }
+
+      if (this.uniqueRoles.indexOf(tmpDestRole) == -1) {
+        this.uniqueRoles.push(tmpDestRole);
+      }
+    }
+
+
+    this.gridSize = Math.ceil( Math.cbrt( this.uniqueRoles.length/2 ) );
+
+    console.log("uniqueRoles.length = " + this.uniqueRoles.length);
+
     this.dataSet = dataSet;
 
     this.program = new WGLUProgram(gl);
@@ -210,12 +229,15 @@ window.VRCubeSea = (function () {
     var counter = 0;
     var roleLookup = {};
 
+    var rolesSeen = [];
+
+
     for (var x = 0; x < gridSize; ++x) {
       for (var y = 0; y < gridSize; ++y) {
         for (var z = 0; z < gridSize; ++z) {
           // Only show the cube edges
           if (z==0||z==gridSize-1||x==0||y==0||x==gridSize-1||y==gridSize-1) {
-            if (counter<this.dataSet.length/2) {
+            if (counter<this.uniqueRoles.length) {
               counter++;
               var dist = 3;
 
@@ -223,7 +245,7 @@ window.VRCubeSea = (function () {
               var tmpY = (dist*y - (gridSize / 2));
               var tmpZ = (dist*z - (gridSize / 2));
 
-              roleLookup[this.dataSet[counter-1]["source"]] = [tmpX,tmpY,tmpZ];
+              roleLookup[ this.uniqueRoles[counter-1] ] = [tmpX,tmpY,tmpZ];
 
               appendCube(tmpX,tmpY,tmpZ);
             }
@@ -233,7 +255,7 @@ window.VRCubeSea = (function () {
     }
 
     for (var xx=0; xx<this.dataSet.length; ++xx) {
-      var sourceLocation = roleLookup[ this.dataSet[xx]["source"]];
+      var sourceLocation = roleLookup[ this.dataSet[xx]["source"] ];
       var destLocation = roleLookup[ this.dataSet[xx]["destination"] ];
 
       if (sourceLocation && destLocation) {
@@ -287,14 +309,14 @@ window.VRCubeSea = (function () {
     gl.uniform1i(this.program.uniform.diffuse, 0);
 
     // Draw cubes
-    for (var cubeNum=0; cubeNum<(parseInt(this.dataSet.length/2)); ++cubeNum) {
+    for (var cubeNum=0; cubeNum<(this.uniqueRoles.length); ++cubeNum) {
       var textureName = this.dataSet[cubeNum]["texture"];
       var tmpTexture = this.textures["redis"];
       if ( this.textures.hasOwnProperty(textureName) ) {
         var tmpTexture = this.textures[textureName];
       }
 
-      gl.activeTexture(gl.TEXTURE0+(cubeNum % 2 ));
+      gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, tmpTexture );
       gl.drawElements(gl.TRIANGLES, 72, gl.UNSIGNED_SHORT, cubeNum*72);
     }
@@ -302,9 +324,11 @@ window.VRCubeSea = (function () {
     // Draw connections
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.texture );
-    var base = (parseInt(this.dataSet.length/2))*72;
-    for (var xx=0; xx<this.dataSet.length; ++xx) {
-      gl.drawElements(gl.TRIANGLES, 72, gl.UNSIGNED_SHORT, base+(xx*72));
+    var base = (this.uniqueRoles.length)*72;
+    for (var xx=0; xx<(this.dataSet.length); ++xx) {
+      if (!(xx % 50)) {
+        gl.drawElements(gl.TRIANGLES, 72, gl.UNSIGNED_SHORT, base+(xx*72));
+      }
     }
 
   };
